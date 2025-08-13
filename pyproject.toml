@@ -1,11 +1,8 @@
-
 [project]
 name = "src"
 version = "0.0.1"
-description = "Insurance Fraud Detection project"
-authors = [
-    { name = "Mahesh Pachpande", email = "pachpandemahesh300@gmail.com" }
-]
+description = "An MLOps project for productionizing models"
+authors = [{name = "Mahesh Pachpande", email = "pachpandemahesh300@gmail.com"}]
 
 [tool.setuptools]
 packages = {find = {}}
