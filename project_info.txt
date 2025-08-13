@@ -1,0 +1,13 @@
+Conda environments are essential in ML projects to **isolate project-specific dependencies**, 
+preventing conflicts between different projects that may require different library versions. 
+This ensures **reproducibility** by allowing a project's exact working environment 
+to be shared and recreated on any machine, 
+making it a critical tool for collaboration and production deployment.
+
+
+The `setup.py` file is a script that tells Python how to package and install your project. 
+It lists all the project's details, such as its name and required libraries. 
+When someone installs your code, this file ensures everything is set up correctly, 
+making it easy for others to use your work.
+
+
