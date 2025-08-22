@@ -5,12 +5,12 @@ Insurance Fraud Detection MLOps Detects insurance fraud using ML with a robust C
 
 ### Create the Conda environment
 ```bash
-conda create -n ins python=3.10 -y
+conda create -p venv1 python=3.10 -y
 ```
 
 ### Activate the Conda environment
 ```bash
-conda activate ins
+conda activate /home/mahesh/Desktop/insurance-fraud-detection-MLOps/venv1
 ```
 
 ### Project structure

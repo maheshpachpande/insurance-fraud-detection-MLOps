@@ -1,20 +1,23 @@
 
 
-import os
-import sys
+
 import pymongo
-import certifi
+import certifi # for ssl
 from typing import Optional, cast
 from abc import ABC, abstractmethod
-from dotenv import load_dotenv
+
 from pymongo.database import Database  
 
-from src.exceptions import CustomException
-from src.logger import logging
-from src.constants import DB_NAME
+from insurance_src.exceptions import CustomException
+from insurance_src.logger import logging
 
+from insurance_src.entity.config_entity import MongoDBConfig
+
+
+from dotenv import load_dotenv
 # Load environment variables once at app start
 load_dotenv()
+
 
 CA_CERT_PATH = certifi.where()
 
@@ -32,19 +35,6 @@ class BaseDatabaseClient(ABC):
     def get_database(self, name: Optional[str] = None) -> Database:
         """Retrieve a database instance by name."""
         pass
-
-
-# ----------------- Config Loader (SRP) -----------------
-class MongoDBConfig:
-    """Configuration holder for MongoDB connection settings."""
-
-    def __init__(self, uri: Optional[str] = None, default_db: str = DB_NAME):
-        temp_uri = uri or os.getenv("MONGODB_URL")
-        if not temp_uri:
-            raise CustomException("MongoDB URI is not set in environment variables.")
-
-        self.uri: str = temp_uri  
-        self.default_db: str = default_db
 
 
 # ----------------- MongoDB Client (OCP, DIP) -----------------
@@ -84,4 +74,3 @@ class MongoDBClient(BaseDatabaseClient):
 if __name__ == "__main__":
     mongo_client = MongoDBClient(MongoDBConfig())
     print(mongo_client.get_database().name)
-    print("MongoDB connection established successfully.")

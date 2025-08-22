@@ -47,6 +47,20 @@ How **data ingestion** in an **MLOps** setup should be designed to be **cost-eff
 * **Pandera** for schema validation
 
 ---
+**data validation** with:
+- **Covariate drift** detection (feature distribution shift)
+- **Concept drift** detection (feature-target relationship changes)
+- **Prior probability drift** detection (class proportion changes)
+
+
+ **Validator Component**
+   - Uses **Kolmogorov–Smirnov (KS) test** for covariate drift.
+   - Uses **Population Stability Index (PSI)** for numerical drift detection.
+   - Uses **Chi-square test** for categorical drift.
+   - Tracks **prior probability changes** by comparing target variable distributions.
+   - Stores drift metrics in metadata.
+
+   
 
 ### **Step 3 — Storage Strategy**
 

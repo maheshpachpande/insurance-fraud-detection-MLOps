@@ -1,13 +1,40 @@
-Conda environments are essential in ML projects to **isolate project-specific dependencies**, 
-preventing conflicts between different projects that may require different library versions. 
-This ensures **reproducibility** by allowing a project's exact working environment 
-to be shared and recreated on any machine, 
-making it a critical tool for collaboration and production deployment.
+Conda environments keep project libraries separate and make it easy to recreate the same setup anywhere.
 
+=================================================================================================================
 
-The `setup.py` file is a script that tells Python how to package and install your project. 
-It lists all the project's details, such as its name and required libraries. 
-When someone installs your code, this file ensures everything is set up correctly, 
-making it easy for others to use your work.
+setup.py is a Python script that defines how to package and install a project. 
+It includes the project’s name, dependencies, and setup instructions so others can easily install and use it.
 
+Run the command: pip install .
+for development mode (so changes reflect without reinstalling): pip install -e .
+
+=================================================================================================================
+
+S (Single Responsibility) → Each class/module should do one thing.
+
+O (Open/Closed) → Code should be open for extension, closed for modification.
+
+L (Liskov Substitution) → Derived classes should be replaceable with base ones.
+
+I (Interface Segregation) → Prefer small, specific interfaces over big ones.
+
+D (Dependency Inversion) → Depend on abstractions, not concrete classes.
+
+=================================================================================================================
+
+. Flow Summary
+
+Connect → MongoDBClient uses MongoDBConfig.
+
+Extract → MongoDataExtractor pulls data.
+
+Clean → DataCleaner processes data.
+
+Save → CSVDataSaver writes to feature store.
+
+Split → Train/test using train_test_split.
+
+Return → Paths stored in DataIngestionArtifact.
+
+=================================================================================================================
 

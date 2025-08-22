@@ -1,0 +1,89 @@
+# ====================================================
+# Dataset Schema Configuration for Insurance Fraud
+# ====================================================
+schema_version: 1.0
+description: >
+  Configuration of insurance fraud dataset columns,
+  including types, target column, and columns to drop.
+
+columns:
+  months_as_customer: int
+  age: int
+  policy_state: str
+  policy_csl: str
+  policy_deductable: int
+  policy_annual_premium: float
+  umbrella_limit: int
+  insured_sex: str
+  insured_education_level: str
+  insured_occupation: str
+  insured_hobbies: str
+  insured_relationship: str
+  capital-gains: int
+  capital-loss: int
+  incident_type: str
+  collision_type: str
+  incident_severity: str
+  authorities_contacted: str
+  incident_state: str
+  incident_hour_of_the_day: int
+  number_of_vehicles_involved: int
+  property_damage: str
+  bodily_injuries: int
+  witnesses: int
+  police_report_available: str
+  total_claim_amount: int
+  injury_claim: int
+  property_claim: int
+  vehicle_claim: int
+  auto_make: str
+  auto_year: int
+  fraud_reported: str
+
+target_column:
+  - fraud_reported
+
+drop_columns:
+  - policy_number
+  - policy_bind_date
+  - incident_date
+  - incident_location
+  - auto_model
+  - insured_zip
+  - incident_city
+
+numerical_columns:
+  - months_as_customer
+  - age
+  - policy_deductable
+  - policy_annual_premium
+  - umbrella_limit
+  - capital-gains
+  - capital-loss
+  - incident_hour_of_the_day
+  - number_of_vehicles_involved
+  - bodily_injuries
+  - witnesses
+  - total_claim_amount
+  - injury_claim
+  - property_claim
+  - vehicle_claim
+  - auto_year
+
+categorical_columns:
+  - policy_state
+  - policy_csl
+  - insured_sex
+  - insured_education_level
+  - insured_occupation
+  - insured_hobbies
+  - insured_relationship
+  - incident_type
+  - collision_type
+  - incident_severity
+  - authorities_contacted
+  - incident_state
+  - property_damage
+  - police_report_available
+  - auto_make
+  - fraud_reported

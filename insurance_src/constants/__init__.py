@@ -31,9 +31,8 @@ PREPROCESSOR_FILE_NAME: str = "preprocessing.pkl"
 
 CURRENT_YEAR: int = date.today().year
 
-VALIDATION_OUTPUT_PATH: str = os.path.join(
-    ARTIFACT_DIR, "data_validation", "validation.yaml"
-)
+VALIDATION_OUTPUT: str = "validation.yaml"
+
 SCHEMA_FILE_PATH: str = os.path.join("config", "schema.yaml")
 SCHEMA_DROP_COLS_KEY: str = "drop_columns"
 

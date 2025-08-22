@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-project_name = "src"
+project_name = "insurance_src"
 
 list_of_files = [
     f"{project_name}/__init__.py",
