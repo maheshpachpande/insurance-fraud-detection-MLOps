@@ -36,6 +36,8 @@ VALIDATION_OUTPUT: str = "validation.yaml"
 SCHEMA_FILE_PATH: str = os.path.join("config", "schema.yaml")
 SCHEMA_DROP_COLS_KEY: str = "drop_columns"
 
+FEATURE_ENGINEERING_CONFIG_FILE: str = "config/feature_engineering.yaml"
+
 # =====================================================
 # 📌 AWS (Env-Based)
 # =====================================================

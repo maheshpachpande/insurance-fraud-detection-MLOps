@@ -1,0 +1,29 @@
+drop_columns:
+  - insured_zip
+  - policy_number
+  - policy_deductable
+  - umbrella_limit
+  - bodily_injuries
+  - incident_hour_of_the_day
+  - number_of_vehicles_involved
+  - witnesses
+  - policy_csl
+  - incident_location
+
+required_raw_columns:
+  - policy_deductable
+  - umbrella_limit
+  - bodily_injuries
+  - incident_hour_of_the_day
+  - number_of_vehicles_involved
+  - witnesses
+  - policy_csl
+
+ordinal_categories:
+  policy_deductable_cat: ["Low", "Medium", "High", "Unknown"]
+  umbrella_limit_cat: ["None", "Basic", "Standard", "Extended", "Premium", "Unknown"]
+  bodily_injuries_cat: ["None", "Minor", "Major", "Unknown"]
+  incident_hour_cat: ["Early Morning", "Morning", "Afternoon", "Evening", "Unknown"]
+  vehicles_involved_cat: ["Single Vehicle", "Two Vehicles", "Multi-Vehicle", "Unknown"]
+  witnesses_cat: ["No Witness", "Single Witness", "Multiple Witnesses", "Unknown"]
+  policy_csl_cat: ["Basic", "Standard", "Premium", "Other", "Unknown"]

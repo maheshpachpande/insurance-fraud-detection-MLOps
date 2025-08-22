@@ -41,3 +41,23 @@ class DataValidationArtifact:
             f"📝 Validated Test File : {self.valid_test_file_path}\n"
             f"📝 Drift Report File   : {self.drift_report_file_path}\n"
         )
+        
+
+@dataclass(frozen=True)
+class DataTransformationArtifact:
+    """
+    Holds file paths for transformed datasets and preprocessing object.
+    """
+
+    transformed_object_file_path: str
+    transformed_train_file_path: str
+    transformed_test_file_path: str
+
+    def __str__(self):
+        return (
+            f"\n📂 Data Transformation Artifact\n"
+            f"---------------------------------\n"
+            f"📝 Preprocessor Object File : {self.transformed_object_file_path}\n"
+            f"📝 Transformed Train File   : {self.transformed_train_file_path}\n"
+            f"📝 Transformed Test File    : {self.transformed_test_file_path}\n"
+        )
