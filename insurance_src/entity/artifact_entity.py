@@ -61,3 +61,54 @@ class DataTransformationArtifact:
             f"📝 Transformed Train File   : {self.transformed_train_file_path}\n"
             f"📝 Transformed Test File    : {self.transformed_test_file_path}\n"
         )
+        
+        
+from dataclasses import dataclass
+from typing import Optional
+
+
+# ---------------------------
+# Classification Metrics Artifact
+# ---------------------------
+@dataclass(frozen=True)
+class ClassificationMetricArtifact:
+    """
+    Artifact to store classification evaluation metrics.
+    Immutable once created.
+    """
+    f1_score: float        # Harmonic mean of precision and recall
+    precision_score: float # Correct positive predictions / total predicted positives
+    recall_score: float    # Correct positive predictions / total actual positives
+
+    def __str__(self) -> str:
+        return (
+            f"\nClassification Metrics:\n"
+            f"  F1 Score      : {self.f1_score:.4f}\n"
+            f"  Precision     : {self.precision_score:.4f}\n"
+            f"  Recall        : {self.recall_score:.4f}\n"
+        )
+
+
+# ---------------------------
+# Model Trainer Artifact
+# ---------------------------
+@dataclass(frozen=True)
+class ModelTrainerArtifact:
+    """
+    Artifact produced after model training.
+    Stores trained model path and evaluation metrics.
+    Immutable once created.
+    """
+    trained_model_file_path: str                                # Path where the trained model is saved
+    test_metric_artifact: ClassificationMetricArtifact          # Metrics on test dataset
+    train_metric_artifact: Optional[ClassificationMetricArtifact] = None  # (Optional) metrics on training dataset
+
+    def __str__(self) -> str:
+        result = (
+            f"\nModel Trainer Artifact:\n"
+            f"  Trained Model Path : {self.trained_model_file_path}\n"
+        )
+        if self.train_metric_artifact:
+            result += f"  Train Metrics      : {self.train_metric_artifact}"
+        result += f"  Test Metrics       : {self.test_metric_artifact}"
+        return result

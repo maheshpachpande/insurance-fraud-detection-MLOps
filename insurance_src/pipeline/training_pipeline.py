@@ -6,7 +6,7 @@ from insurance_src.logger import logging
 from insurance_src.components.data_ingestion import DataIngestion
 from insurance_src.components.data_validation import DataValidation
 from insurance_src.components.data_transformation import DataTransformation
-# from insurance_src.components.model_trainer import ModelTrainer
+from insurance_src.components.model_trainer import ModelTrainer
 # from insurance_src.components.model_evaluation import ModelEvaluation
 # from insurance_src.components.model_pusher import ModelPusher
 
@@ -14,7 +14,7 @@ from insurance_src.entity.config_entity import (
     DataIngestionConfig,
     DataValidationConfig,
     DataTransformationConfig,
-    # ModelTrainerConfig,
+    ModelTrainerConfig,
     # ModelEvaluationConfig,
     # ModelPusherConfig,
 )
@@ -23,7 +23,7 @@ from insurance_src.entity.artifact_entity import (
     DataIngestionArtifact,
     DataValidationArtifact,
     DataTransformationArtifact,
-    # ModelTrainerArtifact,
+    ModelTrainerArtifact,
     # ModelEvaluationArtifact,
     # ModelPusherArtifact,
 )
@@ -40,7 +40,7 @@ class TrainPipeline:
         ingestion_config: Optional[DataIngestionConfig] = None,
         validation_config: Optional[DataValidationConfig] = None,
         transformation_config: Optional[DataTransformationConfig] = None,
-        # trainer_config: Optional[ModelTrainerConfig] = None,
+        trainer_config: Optional[ModelTrainerConfig] = None,
         # evaluation_config: Optional[ModelEvaluationConfig] = None,
         # pusher_config: Optional[ModelPusherConfig] = None,
     ) -> None:
@@ -48,7 +48,7 @@ class TrainPipeline:
             self.data_ingestion_config = ingestion_config or DataIngestionConfig()
             self.data_validation_config = validation_config or DataValidationConfig()
             self.data_transformation_config = transformation_config or DataTransformationConfig()
-            # self.model_trainer_config = trainer_config or ModelTrainerConfig()
+            self.model_trainer_config = trainer_config or ModelTrainerConfig()
             # self.model_evaluation_config = evaluation_config or ModelEvaluationConfig()
             # self.model_pusher_config = pusher_config or ModelPusherConfig()
         except Exception as e:
@@ -94,18 +94,21 @@ class TrainPipeline:
         except Exception as e:
             raise CustomException(e)
 
-    # # ------------------- Stage 4 -------------------
-    # def start_model_trainer(
-    #     self, data_transformation_artifact: DataTransformationArtifact
-    # ) -> ModelTrainerArtifact:
-    #     try:
-    #         logging.info("▶️ Starting model training...")
-    #         trainer = ModelTrainer(self.model_trainer_config)
-    #         artifact = trainer.train(data_transformation_artifact)
-    #         logging.info(f"✅ Model training completed: {artifact}")
-    #         return artifact
-    #     except Exception as e:
-    #         raise CustomException(e)
+    # ------------------- Stage 4 -------------------
+    def start_model_trainer(
+        self, data_transformation_artifact: DataTransformationArtifact
+    ) -> ModelTrainerArtifact:
+        try:
+            logging.info("▶️ Starting model training...")
+            trainer = ModelTrainer(
+                model_trainer_config=self.model_trainer_config,
+                data_transformation_artifact=data_transformation_artifact
+            )
+            artifact = trainer.initiate_model_trainer()
+            logging.info(f"✅ Model training completed: {artifact}")
+            return artifact
+        except Exception as e:
+            raise CustomException(e)
 
     # # ------------------- Stage 5 -------------------
     # def start_model_evaluation(
@@ -143,7 +146,7 @@ class TrainPipeline:
             ingestion_artifact = self.start_data_ingestion()
             validation_artifact = self.start_data_validation(ingestion_artifact)
             transformation_artifact = self.start_data_transformation(validation_artifact)
-            # trainer_artifact = self.start_model_trainer(transformation_artifact)
+            trainer_artifact = self.start_model_trainer(transformation_artifact)
             # evaluation_artifact = self.start_model_evaluation(
             #     ingestion_artifact, trainer_artifact
             # )

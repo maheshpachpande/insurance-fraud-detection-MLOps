@@ -5,6 +5,8 @@ from insurance_src.utils.main_utils import read_yaml_file
 
 from dataclasses import dataclass
 from typing import Tuple, Dict, List, Optional, Literal
+from sklearn.base import BaseEstimator
+
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -116,3 +118,27 @@ class DataTransformationConfig:
         DATA_TRANSFORMATION_OBJECT_DIR,
         PREPROCESSOR_FILE_NAME,
     )
+    
+    
+@dataclass(frozen=True)
+class ModelTrainerConfig:
+    """Configuration entity for the Model Training stage."""
+
+    # Root directory for storing all model trainer artifacts
+    model_trainer_dir: str = os.path.join(training_pipeline_config.artifact_dir, MODEL_TRAINER_DIR)
+
+    # Full path to the final trained model file (model.pkl or equivalent)
+    trained_model_file_path: str = os.path.join(model_trainer_dir, MODEL_TRAINER_OUTPUT_DIR, MODEL_FILE_NAME)
+
+    # Minimum accuracy required to accept the trained model
+    expected_accuracy: float = MODEL_TRAINER_EXPECTED_SCORE
+
+
+    # Threshold to detect overfitting/underfitting
+    overfitting_underfitting_threshold: float = MODEL_TRAINER_OVERFIT_THRESHOLD
+
+    # Path to store the artifact metadata YAML file
+    artifact_yaml_path: str = os.path.join(ARTIFACT_DIR, MODEL_TRAINER_DIR, MODEL_TRAINER_ARTIFACT_FILE)
+
+    # Path to the model configuration YAML (hyperparameters, search space, etc.)
+    model_config_file_path: str = MODEL_TRAINER_CONFIG_FILE
