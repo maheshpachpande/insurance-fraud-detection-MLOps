@@ -177,15 +177,15 @@ class ModelPusherConfig:
             f")"
         )
 
-# @dataclass
-# class PredictorConfig:
-#     model_file_path: str = MODEL_FILE_NAME
-#     model_bucket_name: str = MODEL_BUCKET_NAME
+@dataclass
+class PredictorConfig:
+    model_file_path: str = MODEL_FILE_NAME
+    model_bucket_name: str = MODEL_BUCKET_NAME
 
-#     def __str__(self) -> str:
-#         return (
-#             f"PredictorConfig(\n"
-#             f"  model_file_path    = '{self.model_file_path}',\n"
-#             f"  model_bucket_name  = '{self.model_bucket_name}'\n"
-#             f")"
-#         )
+    def __str__(self) -> str:
+        return (
+            f"PredictorConfig(\n"
+            f"  model_file_path    = '{self.model_file_path}',\n"
+            f"  model_bucket_name  = '{self.model_bucket_name}'\n"
+            f")"
+        )

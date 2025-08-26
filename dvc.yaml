@@ -5,9 +5,6 @@ stages:
       - insurance_src/components/data_ingestion.py
       - insurance_src/entity/config_entity.py
       - insurance_src/entity/artifact_entity.py
-      # - insurance_src/utils/main_utils.py
-      # - insurance_src/data_access/mongoDBToPandas.py
-
     outs:
       - artifact/data_ingestion/feature_store/raw.csv
       - artifact/data_ingestion/ingested/train.csv
@@ -20,7 +17,6 @@ stages:
       - insurance_src/components/data_validation.py
       - insurance_src/entity/artifact_entity.py
       - insurance_src/entity/config_entity.py
-      # - insurance_src/utils/main_utils.py
       - artifact/data_ingestion/ingested/train.csv
       - artifact/data_ingestion/ingested/test.csv
     outs:
@@ -37,7 +33,6 @@ stages:
       - insurance_src/components/data_transformation.py
       - insurance_src/entity/config_entity.py
       - insurance_src/entity/artifact_entity.py
-      # - insurance_src/utils/main_utils.py
       - artifact/data_validation/drift_report/dataset_drift.yaml
       - artifact/data_validation/drift_report/probability_drift_target_column.yaml
       - artifact/data_validation/validated/train.csv
@@ -55,7 +50,6 @@ stages:
       - insurance_src/components/model_trainer.py
       - insurance_src/entity/config_entity.py
       - insurance_src/entity/artifact_entity.py
-      # - insurance_src/utils/main_utils.py
       - artifact/data_transformation/transformed_numpy_array/train.npy
       - artifact/data_transformation/transformed_numpy_array/test.npy
       - artifact/data_transformation/transformed_binary_object/preprocessing.pkl
@@ -63,8 +57,6 @@ stages:
     outs:
       - artifact/model_trainer/trained_model/model.pkl
       - artifact/model_trainer/trained_model/metrics.yaml
-      - artifact/models/*
-
 
 
   
@@ -74,11 +66,9 @@ stages:
       - insurance_src/components/model_evaluation.py
       - insurance_src/entity/config_entity.py
       - insurance_src/entity/artifact_entity.py
-      # - insurance_src/utils/main_utils.py
       - artifact/model_trainer/trained_model/model.pkl
       - artifact/model_trainer/trained_model/metrics.yaml
-      - artifact/models/*
-    #   - artifact/model_evaluation/evaluation_report.yaml
+      
     outs:
       - artifact/model_evaluation/model_evaluation_artifact.yaml
 

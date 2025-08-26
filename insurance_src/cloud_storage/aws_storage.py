@@ -1,264 +1,130 @@
 import boto3
 from insurance_src.configuration.aws_connection import S3Connection
-from io import StringIO
-from typing import Union,List
-import os,sys
-from insurance_src.logger import logging
-from mypy_boto3_s3.service_resource import Bucket
-from insurance_src.exceptions import CustomException
+from io import StringIO, BytesIO
+from typing import Union, List, cast
+import os
+import sys
+from pandas import DataFrame, read_csv
 from botocore.exceptions import ClientError
-from pandas import DataFrame,read_csv
+from mypy_boto3_s3.service_resource import S3ServiceResource, Bucket, Object
+from mypy_boto3_s3.client import S3Client
+from insurance_src.logger import logging
+from insurance_src.exceptions import CustomException
 import pickle
 
 
 class SimpleStorageService:
+    s3_resource: S3ServiceResource
+    s3_client: S3Client
 
     def __init__(self):
-        s3_client = S3Connection()
-        self.s3_resource = s3_client._s3_resource
-        self.s3_client = s3_client._s3_client
+        try:
+            s3_conn = S3Connection()
+            self.s3_resource = cast(S3ServiceResource, s3_conn._s3_resource)
+            self.s3_client = cast(S3Client, s3_conn._s3_client)
+        except Exception as e:
+            raise CustomException(e, sys.exc_info())
 
-    def s3_key_path_available(self,bucket_name,s3_key)->bool:
+    # ---------- S3 Utilities ----------
+
+    def s3_key_path_available(self, bucket_name: str, s3_key: str) -> bool:
         try:
             bucket = self.get_bucket(bucket_name)
-            file_objects = [file_object for file_object in bucket.objects.filter(Prefix=s3_key)]
-            if len(file_objects) > 0:
-                return True
-            else:
-                return False
+            file_objects = list(bucket.objects.filter(Prefix=s3_key))
+            return len(file_objects) > 0
         except Exception as e:
-            raise CustomException(e,sys)
-        
-        
-
-    @staticmethod
-    def read_object(object_name: str, decode: bool = True, make_readable: bool = False) -> Union[StringIO, str]:
-        """
-        Method Name :   read_object
-        Description :   This method reads the object_name object with kwargs
-
-        Output      :   The column name is renamed
-        On Failure  :   Write an exception log and then raise an exception
-
-        Version     :   1.2
-        Revisions   :   moved setup to cloud
-        """
-        logging.info("Entered the read_object method of S3Operations class")
-
-        try:
-            func = (
-                lambda: object_name.get()["Body"].read().decode()
-                if decode is True
-                else object_name.get()["Body"].read()
-            )
-            conv_func = lambda: StringIO(func()) if make_readable is True else func()
-            logging.info("Exited the read_object method of S3Operations class")
-            return conv_func()
-
-        except Exception as e:
-            raise CustomException(e) from e
+            raise CustomException(e, sys.exc_info())
 
     def get_bucket(self, bucket_name: str) -> Bucket:
-        """
-        Method Name :   get_bucket
-        Description :   This method gets the bucket object based on the bucket_name
-
-        Output      :   Bucket object is returned based on the bucket name
-        On Failure  :   Write an exception log and then raise an exception
-
-        Version     :   1.2
-        Revisions   :   moved setup to cloud
-        """
-        logging.info("Entered the get_bucket method of S3Operations class")
-
         try:
-            bucket = self.s3_resource.Bucket(bucket_name)
-            logging.info("Exited the get_bucket method of S3Operations class")
-            return bucket
+            return self.s3_resource.Bucket(bucket_name)
         except Exception as e:
-            raise CustomException(e) from e
+            raise CustomException(e, sys.exc_info())
 
-    def get_file_object( self, filename: str, bucket_name: str) -> Union[List[object], object]:
-        """
-        Method Name :   get_file_object
-        Description :   This method gets the file object from bucket_name bucket based on filename
-
-        Output      :   list of objects or object is returned based on filename
-        On Failure  :   Write an exception log and then raise an exception
-
-        Version     :   1.2
-        Revisions   :   moved setup to cloud
-        """
-        logging.info("Entered the get_file_object method of S3Operations class")
-
+    def get_file_object(self, filename: str, bucket_name: str) -> Union[Object, List[Object]]:
         try:
             bucket = self.get_bucket(bucket_name)
-
-            file_objects = [file_object for file_object in bucket.objects.filter(Prefix=filename)]
-
-            func = lambda x: x[0] if len(x) == 1 else x
-
-            file_objs = func(file_objects)
-            logging.info("Exited the get_file_object method of S3Operations class")
-
-            return file_objs
-
+            file_objects = list(bucket.objects.filter(Prefix=filename))
+            if not file_objects:
+                raise FileNotFoundError(f"No object found with prefix '{filename}' in bucket '{bucket_name}'")
+            return file_objects[0] if len(file_objects) == 1 else file_objects
         except Exception as e:
-            raise CustomException(e) from e
+            raise CustomException(e, sys.exc_info())
 
-    def load_model(self, model_name: str, bucket_name: str, model_dir: str = None) -> object:
-        """
-        Method Name :   load_model
-        Description :   This method loads the model_name model from bucket_name bucket with kwargs
+    # ---------- Read Objects ----------
 
-        Output      :   list of objects or object is returned based on filename
-        On Failure  :   Write an exception log and then raise an exception
-
-        Version     :   1.2
-        Revisions   :   moved setup to cloud
-        """
-        logging.info("Entered the load_model method of S3Operations class")
-
+    def read_object_bytes(self, bucket_name: str, object_name: str) -> BytesIO:
+        """Read S3 object as bytes (for pickle, upload_fileobj, etc.)"""
         try:
-            func = (
-                lambda: model_name
-                if model_dir is None
-                else model_dir + "/" + model_name
-            )
-            model_file = func()
-            file_object = self.get_file_object(model_file, bucket_name)
-            model_obj = self.read_object(file_object, decode=False)
-            model = pickle.loads(model_obj)
-            logging.info("Exited the load_model method of S3Operations class")
-            return model
+            obj: Object = self.s3_resource.Object(bucket_name, object_name)
+            body = obj.get()["Body"].read()
+            return BytesIO(body)
+        except ClientError as e:
+            raise CustomException(e, sys.exc_info())
 
+    def read_object_text(self, bucket_name: str, object_name: str) -> StringIO:
+        """Read S3 object as text (for CSV/text)"""
+        try:
+            obj: Object = self.s3_resource.Object(bucket_name, object_name)
+            body = obj.get()["Body"].read().decode("utf-8")
+            return StringIO(body)
+        except ClientError as e:
+            raise CustomException(e, sys.exc_info())
+
+    # ---------- Model Operations ----------
+
+    def load_model(self, model_path: str, bucket_name: str):
+        try:
+            model_bytes = self.read_object_bytes(bucket_name, model_path)
+            model = pickle.load(model_bytes)
+            return model
         except Exception as e:
-            raise CustomException(e) from e
+            raise CustomException(e, sys.exc_info())
+
+    # ---------- Folder/File Operations ----------
 
     def create_folder(self, folder_name: str, bucket_name: str) -> None:
-        """
-        Method Name :   create_folder
-        Description :   This method creates a folder_name folder in bucket_name bucket
-
-        Output      :   Folder is created in s3 bucket
-        On Failure  :   Write an exception log and then raise an exception
-
-        Version     :   1.2
-        Revisions   :   moved setup to cloud
-        """
-        logging.info("Entered the create_folder method of S3Operations class")
-
         try:
-            self.s3_resource.Object(bucket_name, folder_name).load()
-
+            self.s3_resource.Object(bucket_name, folder_name + "/").load()
         except ClientError as e:
             if e.response["Error"]["Code"] == "404":
-                folder_obj = folder_name + "/"
-                self.s3_client.put_object(Bucket=bucket_name, Key=folder_obj)
+                self.s3_client.put_object(Bucket=bucket_name, Key=folder_name + "/")
             else:
-                pass
-            logging.info("Exited the create_folder method of S3Operations class")
+                raise CustomException(e, sys.exc_info())
 
-    def upload_file(self, from_filename: str, to_filename: str,  bucket_name: str,  remove: bool = True):
-        """
-        Method Name :   upload_file
-        Description :   This method uploads the from_filename file to bucket_name bucket with to_filename as bucket filename
-
-        Output      :   Folder is created in s3 bucket
-        On Failure  :   Write an exception log and then raise an exception
-
-        Version     :   1.2
-        Revisions   :   moved setup to cloud
-        """
-        logging.info("Entered the upload_file method of S3Operations class")
-
+    def upload_file(self, from_filename: str, to_filename: str, bucket_name: str, remove: bool = True):
         try:
-            logging.info(
-                f"Uploading {from_filename} file to {to_filename} file in {bucket_name} bucket"
-            )
-
-            self.s3_resource.meta.client.upload_file(
-                from_filename, bucket_name, to_filename
-            )
-
-            logging.info(
-                f"Uploaded {from_filename} file to {to_filename} file in {bucket_name} bucket"
-            )
-
-            if remove is True:
+            self.s3_resource.meta.client.upload_file(from_filename, bucket_name, to_filename)
+            if remove:
                 os.remove(from_filename)
-
-                logging.info(f"Remove is set to {remove}, deleted the file")
-
-            else:
-                logging.info(f"Remove is set to {remove}, not deleted the file")
-
-            logging.info("Exited the upload_file method of S3Operations class")
-
         except Exception as e:
-            raise CustomException(e) from e
+            raise CustomException(e, sys.exc_info())
 
-    def upload_df_as_csv(self,data_frame: DataFrame,local_filename: str, bucket_filename: str,bucket_name: str,) -> None:
-        """
-        Method Name :   upload_df_as_csv
-        Description :   This method uploads the dataframe to bucket_filename csv file in bucket_name bucket
-
-        Output      :   Folder is created in s3 bucket
-        On Failure  :   Write an exception log and then raise an exception
-
-        Version     :   1.2
-        Revisions   :   moved setup to cloud
-        """
-        logging.info("Entered the upload_df_as_csv method of S3Operations class")
-
+    def upload_df_as_csv(self, df: DataFrame, local_filename: str, bucket_filename: str, bucket_name: str):
         try:
-            data_frame.to_csv(local_filename, index=None, header=True)
-
+            df.to_csv(local_filename, index=False)
             self.upload_file(local_filename, bucket_filename, bucket_name)
-
-            logging.info("Exited the upload_df_as_csv method of S3Operations class")
-
         except Exception as e:
-            raise CustomException(e) from e
+            raise CustomException(e, sys.exc_info())
 
-    def get_df_from_object(self, object_: object) -> DataFrame:
-        """
-        Method Name :   get_df_from_object
-        Description :   This method gets the dataframe from the object_name object
+    # ---------- DataFrame Operations ----------
 
-        Output      :   Folder is created in s3 bucket
-        On Failure  :   Write an exception log and then raise an exception
-
-        Version     :   1.2
-        Revisions   :   moved setup to cloud
-        """
-        logging.info("Entered the get_df_from_object method of S3Operations class")
-
+    def get_df_from_object(self, object_: Union[Object, BytesIO]) -> DataFrame:
         try:
-            content = self.read_object(object_, make_readable=True)
+            if isinstance(object_, Object):
+                content = self.read_object_text(object_.bucket_name, object_.key)
+            elif isinstance(object_, BytesIO):
+                content = StringIO(object_.read().decode("utf-8"))
+            else:
+                raise TypeError("Unsupported object type for conversion to DataFrame")
             df = read_csv(content, na_values="na")
-            logging.info("Exited the get_df_from_object method of S3Operations class")
             return df
         except Exception as e:
-            raise CustomException(e) from e
+            raise CustomException(e, sys.exc_info())
 
     def read_csv(self, filename: str, bucket_name: str) -> DataFrame:
-        """
-        Method Name :   get_df_from_object
-        Description :   This method gets the dataframe from the object_name object
-
-        Output      :   Folder is created in s3 bucket
-        On Failure  :   Write an exception log and then raise an exception
-
-        Version     :   1.2
-        Revisions   :   moved setup to cloud
-        """
-        logging.info("Entered the read_csv method of S3Operations class")
-
         try:
-            csv_obj = self.get_file_object(filename, bucket_name)
-            df = self.get_df_from_object(csv_obj)
-            logging.info("Exited the read_csv method of S3Operations class")
-            return df
+            obj = self.get_file_object(filename, bucket_name)
+            return self.get_df_from_object(obj)
         except Exception as e:
-            raise CustomException(e) from e
+            raise CustomException(e, sys.exc_info())

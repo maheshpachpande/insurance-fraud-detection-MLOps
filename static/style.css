@@ -1,0 +1,130 @@
+/* ===== GLOBAL RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #4a6ee0, #8fa8ff);
+  padding: 20px;
+  color: #fff;
+}
+
+/* ===== TITLES ===== */
+h1 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+h2 {
+  text-align: center;
+  font-size: 1.3rem;
+  margin-bottom: 25px;
+  font-weight: 400;
+}
+
+/* ===== FORM CONTAINER ===== */
+form {
+  max-width: 900px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+/* ===== LABELS ===== */
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #fff;
+}
+
+/* ===== INPUT WRAPPER ===== */
+.input-wrapper {
+  position: relative;
+}
+
+.input-wrapper i {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.8);
+  pointer-events: none;
+}
+
+/* ===== INPUT FIELDS ===== */
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="email"],
+input[type="tel"] {
+  width: 100%;
+  padding: 12px 12px 12px 38px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+input:focus {
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+  transform: scale(1.02);
+}
+
+/* ===== SUBMIT BUTTON ===== */
+button {
+  grid-column: 1 / -1;
+  padding: 14px;
+  background: linear-gradient(90deg, #ff7f50, #ffb347);
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background: linear-gradient(90deg, #ffb347, #ff7f50);
+  transform: scale(1.05);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+/* ===== PLACEHOLDER COLOR ===== */
+input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ===== ANIMATION ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 600px) {
+  form {
+    padding: 20px;
+  }
+  h1 {
+    font-size: 1.8rem;
+  }
+}

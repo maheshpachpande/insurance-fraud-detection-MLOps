@@ -26,6 +26,8 @@ pydantic
 mlflow
 dagshub
 dvc
+dvc[s3]
+python-multipart
 # apache-airflow==2.8.3
 
 # -e .
