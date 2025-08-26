@@ -1,0 +1,221 @@
+schema: '2.0'
+stages:
+  data_ingestion:
+    cmd: python insurance_src/components/data_ingestion.py
+    deps:
+    - path: insurance_src/components/data_ingestion.py
+      hash: md5
+      md5: def104247d1c930a2694ab3cd80fea10
+      size: 4000
+    - path: insurance_src/entity/artifact_entity.py
+      hash: md5
+      md5: e841a8b8326c3b2cb0a36178a4cda75a
+      size: 6150
+    - path: insurance_src/entity/config_entity.py
+      hash: md5
+      md5: 25f75d1fba97d9abf9ab1cfec925c42e
+      size: 6450
+    outs:
+    - path: artifact/data_ingestion/feature_store/raw.csv
+      hash: md5
+      md5: 0ecd29f5260f215e72680fc892bfc7a8
+      size: 263241
+    - path: artifact/data_ingestion/ingested/test.csv
+      hash: md5
+      md5: 7f70ae405a58f179699e6d6d16d9678a
+      size: 49465
+    - path: artifact/data_ingestion/ingested/train.csv
+      hash: md5
+      md5: f0fcbe23db79fdb4e99f9eb262903f7a
+      size: 148358
+  data_validation:
+    cmd: python insurance_src/components/data_validation.py
+    deps:
+    - path: artifact/data_ingestion/ingested/test.csv
+      hash: md5
+      md5: 7f70ae405a58f179699e6d6d16d9678a
+      size: 49465
+    - path: artifact/data_ingestion/ingested/train.csv
+      hash: md5
+      md5: f0fcbe23db79fdb4e99f9eb262903f7a
+      size: 148358
+    - path: insurance_src/components/data_validation.py
+      hash: md5
+      md5: 51ceb2ce41561bf083645c7d4f00bc4f
+      size: 3918
+    - path: insurance_src/entity/artifact_entity.py
+      hash: md5
+      md5: e841a8b8326c3b2cb0a36178a4cda75a
+      size: 6150
+    - path: insurance_src/entity/config_entity.py
+      hash: md5
+      md5: 25f75d1fba97d9abf9ab1cfec925c42e
+      size: 6450
+    outs:
+    - path: artifact/data_validation/drift_report/dataset_drift.yaml
+      hash: md5
+      md5: 9cfa5647d6f6083c55e8e09155869741
+      size: 7296
+    - path: 
+        artifact/data_validation/drift_report/probability_drift_target_column.yaml
+      hash: md5
+      md5: ab4264eaf31780b01488fa6e7b61ad20
+      size: 179
+    - path: artifact/data_validation/validated/test.csv
+      hash: md5
+      md5: 7f70ae405a58f179699e6d6d16d9678a
+      size: 49465
+    - path: artifact/data_validation/validated/train.csv
+      hash: md5
+      md5: f0fcbe23db79fdb4e99f9eb262903f7a
+      size: 148358
+    - path: artifact/data_validation/validation.yaml
+      hash: md5
+      md5: e45551af7a32798819f4a3e208543c9d
+      size: 239
+  data_transformation:
+    cmd: python insurance_src/components/data_transformation.py
+    deps:
+    - path: artifact/data_validation/drift_report/dataset_drift.yaml
+      hash: md5
+      md5: 9cfa5647d6f6083c55e8e09155869741
+      size: 7296
+    - path: 
+        artifact/data_validation/drift_report/probability_drift_target_column.yaml
+      hash: md5
+      md5: ab4264eaf31780b01488fa6e7b61ad20
+      size: 179
+    - path: artifact/data_validation/validated/test.csv
+      hash: md5
+      md5: 7f70ae405a58f179699e6d6d16d9678a
+      size: 49465
+    - path: artifact/data_validation/validated/train.csv
+      hash: md5
+      md5: f0fcbe23db79fdb4e99f9eb262903f7a
+      size: 148358
+    - path: artifact/data_validation/validation.yaml
+      hash: md5
+      md5: e45551af7a32798819f4a3e208543c9d
+      size: 239
+    - path: insurance_src/components/data_transformation.py
+      hash: md5
+      md5: a4fcce36dd84a74db2ac00c1c7e42da6
+      size: 6781
+    - path: insurance_src/entity/artifact_entity.py
+      hash: md5
+      md5: e841a8b8326c3b2cb0a36178a4cda75a
+      size: 6150
+    - path: insurance_src/entity/config_entity.py
+      hash: md5
+      md5: 25f75d1fba97d9abf9ab1cfec925c42e
+      size: 6450
+    outs:
+    - path: 
+        artifact/data_transformation/transformed_binary_object/preprocessing.pkl
+      hash: md5
+      md5: 7e99c5b53dc58a9afb2265416f7f4503
+      size: 9352
+    - path: artifact/data_transformation/transformed_numpy_array/test.npy
+      hash: md5
+      md5: 1342f050fe55d912b42af62a464f37c3
+      size: 346933
+    - path: artifact/data_transformation/transformed_numpy_array/train.npy
+      hash: md5
+      md5: f23b15533e54b1f893b6ac4eeaaa8d1e
+      size: 980100
+  model_trainer:
+    cmd: python insurance_src/components/model_trainer.py
+    deps:
+    - path: 
+        artifact/data_transformation/transformed_binary_object/preprocessing.pkl
+      hash: md5
+      md5: 7e99c5b53dc58a9afb2265416f7f4503
+      size: 9352
+    - path: artifact/data_transformation/transformed_numpy_array/test.npy
+      hash: md5
+      md5: 1342f050fe55d912b42af62a464f37c3
+      size: 346933
+    - path: artifact/data_transformation/transformed_numpy_array/train.npy
+      hash: md5
+      md5: f23b15533e54b1f893b6ac4eeaaa8d1e
+      size: 980100
+    - path: insurance_src/components/model_trainer.py
+      hash: md5
+      md5: c0c80dda8a066788813f13471ea35529
+      size: 7652
+    - path: insurance_src/entity/artifact_entity.py
+      hash: md5
+      md5: e841a8b8326c3b2cb0a36178a4cda75a
+      size: 6150
+    - path: insurance_src/entity/config_entity.py
+      hash: md5
+      md5: 25f75d1fba97d9abf9ab1cfec925c42e
+      size: 6450
+    outs:
+    - path: artifact/model_trainer/trained_model/metrics.yaml
+      hash: md5
+      md5: 2a1df6064f5ab9d1baf5b8d7cae4f9f7
+      size: 98
+    - path: artifact/model_trainer/trained_model/model.pkl
+      hash: md5
+      md5: 7a3ca25d8178091fb68192b28aacdb08
+      size: 469571
+  model_evaluation:
+    cmd: python insurance_src/components/model_evaluation.py
+    deps:
+    - path: artifact/model_trainer/trained_model/metrics.yaml
+      hash: md5
+      md5: 2a1df6064f5ab9d1baf5b8d7cae4f9f7
+      size: 98
+    - path: artifact/model_trainer/trained_model/model.pkl
+      hash: md5
+      md5: 7a3ca25d8178091fb68192b28aacdb08
+      size: 469571
+    - path: insurance_src/components/model_evaluation.py
+      hash: md5
+      md5: 521b2774c9a34600baaca167aff79c82
+      size: 6208
+    - path: insurance_src/entity/artifact_entity.py
+      hash: md5
+      md5: e841a8b8326c3b2cb0a36178a4cda75a
+      size: 6150
+    - path: insurance_src/entity/config_entity.py
+      hash: md5
+      md5: 25f75d1fba97d9abf9ab1cfec925c42e
+      size: 6450
+    outs:
+    - path: artifact/model_evaluation/model_evaluation_artifact.yaml
+      hash: md5
+      md5: 93e025ebd182f12aaebaed22b5eddd8b
+      size: 187
+  model_pusher:
+    cmd: python insurance_src/components/model_pusher.py
+    deps:
+    - path: artifact/model_evaluation/model_evaluation_artifact.yaml
+      hash: md5
+      md5: 93e025ebd182f12aaebaed22b5eddd8b
+      size: 187
+    - path: artifact/model_trainer/trained_model/model.pkl
+      hash: md5
+      md5: 7a3ca25d8178091fb68192b28aacdb08
+      size: 469571
+    - path: insurance_src/cloud_storage/aws_storage.py
+      hash: md5
+      md5: 5138d028b333f0347913da2d4935f14e
+      size: 9773
+    - path: insurance_src/components/model_pusher.py
+      hash: md5
+      md5: 00e5294a78357099e668125d8f89695c
+      size: 3205
+    - path: insurance_src/entity/artifact_entity.py
+      hash: md5
+      md5: e841a8b8326c3b2cb0a36178a4cda75a
+      size: 6150
+    - path: insurance_src/entity/config_entity.py
+      hash: md5
+      md5: 25f75d1fba97d9abf9ab1cfec925c42e
+      size: 6450
+    - path: insurance_src/entity/s3_estimator.py
+      hash: md5
+      md5: f704014d1ca565e34864cf4ea7d9a774
+      size: 4515
