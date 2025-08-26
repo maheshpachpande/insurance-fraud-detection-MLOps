@@ -41,10 +41,11 @@ FEATURE_ENGINEERING_CONFIG_FILE: str = "config/feature_engineering.yaml"
 # =====================================================
 # 📌 AWS (Env-Based)
 # =====================================================
-AWS_ACCESS_KEY_ID: str = os.getenv("AWS_ACCESS_KEY_ID", "")
-AWS_SECRET_ACCESS_KEY: str = os.getenv("AWS_SECRET_ACCESS_KEY", "")
-AWS_REGION_NAME: str = os.getenv("AWS_REGION_NAME", "us-east-1")
-MODEL_BUCKET_NAME: str = os.getenv("MODEL_BUCKET_NAME", "insurance23")
+
+AWS_ACCESS_KEY_ID_ENV_KEY = "AWS_ACCESS_KEY_ID"
+AWS_SECRET_ACCESS_KEY_ENV_KEY = "AWS_SECRET_ACCESS_KEY"
+REGION_NAME = "us-east-1"
+MODEL_BUCKET_NAME = "insurance23"
 
 # =====================================================
 # 📌 Data Ingestion

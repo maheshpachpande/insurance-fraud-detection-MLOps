@@ -5,8 +5,8 @@ from insurance_src.pipeline.stage_01_data_ingestion_pipeline import DataIngestio
 from insurance_src.pipeline.stage_02_data_validation_pipeline import DataValidationPipeline
 from insurance_src.pipeline.stage_03_data_transformation_pipeline import DataTransformationPipeline
 from insurance_src.pipeline.stage_04_model_trainer_pipeline import ModelTrainingPipeline
-# from insurance_src.pipeline.stage_05_model_evolution import ModelEvolutionTrainingPipeline
-# from insurance_src.pipeline.stage_06_model_pusher import ModelPusherTrainingPipeline
+from insurance_src.pipeline.stage_05_model_evolution_pipeline import ModelEvolutionTrainingPipeline
+from insurance_src.pipeline.stage_06_model_pusher_pipeline import ModelPusherTrainingPipeline
 
 import matplotlib
 matplotlib.use('Agg')  # Use non-GUI backend to avoid tkinter errors
@@ -29,6 +29,7 @@ except Exception as e:
 
 STAGE_NAME = "Data Validation stage"
 
+
 try:
     logging.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
     obj = DataValidationPipeline()
@@ -39,6 +40,7 @@ except Exception as e:
     
     
 STAGE_NAME = "Data Transformation stage"
+
 
 try:
     logging.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
@@ -51,6 +53,7 @@ except Exception as e:
     
 STAGE_NAME = "Model Trainer stage"
 
+
 try:
     logging.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
     obj = ModelTrainingPipeline()
@@ -61,19 +64,25 @@ except Exception as e:
 
 
     
-# STAGE_NAME = "Model Evolution stage"
+STAGE_NAME = "Model Evolution stage"
 
-# try:
-#     model_evolution_pipeline = ModelEvolutionTrainingPipeline()
-#     model_evolution_pipeline.main()
-# except Exception as e:
-#     logging.error(f"Error during model training and evaluation: {e}")
-#     sys.exit(1)
+
+try:
+    logging.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
+    model_evolution_pipeline = ModelEvolutionTrainingPipeline()
+    model_evolution_pipeline.run()
+    logging.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
+except Exception as e:
+    raise CustomException(e)
             
-# STAGE_NAME = "Model Pusher stage"
-# try:
-#     model_evolution_pipeline = ModelPusherTrainingPipeline()
-#     model_evolution_pipeline.main()
-# except Exception as e:
-#     logging.error(f"Error during model training and evaluation: {e}")
-#     sys.exit(1)
+            
+STAGE_NAME = "Model Pusher stage"
+
+
+try:
+    logging.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
+    model_pusher_pipeline = ModelPusherTrainingPipeline()
+    model_pusher_pipeline.run()
+    logging.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
+except Exception as e:
+    raise CustomException(e)

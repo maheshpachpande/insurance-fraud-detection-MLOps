@@ -1,16 +1,12 @@
-from typing import Protocol, Union
+from typing import Protocol
 import pandas as pd
-import numpy as np
 from sklearn.pipeline import Pipeline
 from insurance_src.logger import logging
 
 
 class Predictable(Protocol):
-    """
-    Protocol for any model with a scikit-learn style `predict` method.
-    Ensures type safety and enforces a consistent interface for prediction.
-    """
-    def predict(self, X: Union[np.ndarray, pd.DataFrame]) -> Union[np.ndarray, list]:
+    """Protocol for any model with a scikit-learn style predict method."""
+    def predict(self, X) -> list:
         ...
 
 
@@ -31,7 +27,7 @@ class InsuranceModel:
         trained_model_object (Predictable): Trained ML model object
     """
 
-    def __init__(self, preprocessing_object: Pipeline, trained_model_object: Predictable) -> None:
+    def __init__(self, preprocessing_object: Pipeline, trained_model_object: Predictable):
         """
         Initialize the InsuranceModel.
 
@@ -42,7 +38,7 @@ class InsuranceModel:
         self.preprocessing_object = preprocessing_object
         self.trained_model_object = trained_model_object
 
-    def predict(self, dataframe: pd.DataFrame) -> Union[np.ndarray, dict]:
+    def predict(self, dataframe: pd.DataFrame):
         """
         Transform raw inputs using the preprocessing pipeline and perform predictions
         with the trained model.
@@ -69,7 +65,7 @@ class InsuranceModel:
             logging.error(f"Prediction failed: {e}", exc_info=True)
             return {"status": False, "error": str(e)}
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         """
         Developer-friendly representation of the InsuranceModel.
         """
@@ -79,7 +75,7 @@ class InsuranceModel:
             f"  Model={type(self.trained_model_object).__name__}\n)"
         )
 
-    def __str__(self) -> str:
+    def __str__(self):
         """
         User-friendly string representation of the InsuranceModel.
         """

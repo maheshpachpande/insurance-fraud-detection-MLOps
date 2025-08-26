@@ -7,16 +7,16 @@ from insurance_src.components.data_ingestion import DataIngestion
 from insurance_src.components.data_validation import DataValidation
 from insurance_src.components.data_transformation import DataTransformation
 from insurance_src.components.model_trainer import ModelTrainer
-# from insurance_src.components.model_evaluation import ModelEvaluation
-# from insurance_src.components.model_pusher import ModelPusher
+from insurance_src.components.model_evaluation import ModelEvaluation
+from insurance_src.components.model_pusher import ModelPusher
 
 from insurance_src.entity.config_entity import (
     DataIngestionConfig,
     DataValidationConfig,
     DataTransformationConfig,
     ModelTrainerConfig,
-    # ModelEvaluationConfig,
-    # ModelPusherConfig,
+    ModelEvaluationConfig,
+    ModelPusherConfig,
 )
 
 from insurance_src.entity.artifact_entity import (
@@ -24,8 +24,8 @@ from insurance_src.entity.artifact_entity import (
     DataValidationArtifact,
     DataTransformationArtifact,
     ModelTrainerArtifact,
-    # ModelEvaluationArtifact,
-    # ModelPusherArtifact,
+    ModelEvaluationArtifact,
+    ModelPusherArtifact,
 )
 
 
@@ -41,16 +41,16 @@ class TrainPipeline:
         validation_config: Optional[DataValidationConfig] = None,
         transformation_config: Optional[DataTransformationConfig] = None,
         trainer_config: Optional[ModelTrainerConfig] = None,
-        # evaluation_config: Optional[ModelEvaluationConfig] = None,
-        # pusher_config: Optional[ModelPusherConfig] = None,
+        evaluation_config: Optional[ModelEvaluationConfig] = None,
+        pusher_config: Optional[ModelPusherConfig] = None,
     ) -> None:
         try:
             self.data_ingestion_config = ingestion_config or DataIngestionConfig()
             self.data_validation_config = validation_config or DataValidationConfig()
             self.data_transformation_config = transformation_config or DataTransformationConfig()
             self.model_trainer_config = trainer_config or ModelTrainerConfig()
-            # self.model_evaluation_config = evaluation_config or ModelEvaluationConfig()
-            # self.model_pusher_config = pusher_config or ModelPusherConfig()
+            self.model_evaluation_config = evaluation_config or ModelEvaluationConfig()
+            self.model_pusher_config = pusher_config or ModelPusherConfig()
         except Exception as e:
             raise CustomException(e)
 
@@ -110,33 +110,40 @@ class TrainPipeline:
         except Exception as e:
             raise CustomException(e)
 
-    # # ------------------- Stage 5 -------------------
-    # def start_model_evaluation(
-    #     self,
-    #     data_ingestion_artifact: DataIngestionArtifact,
-    #     model_trainer_artifact: ModelTrainerArtifact,
-    # ) -> ModelEvaluationArtifact:
-    #     try:
-    #         logging.info("▶️ Starting model evaluation...")
-    #         evaluator = ModelEvaluation(self.model_evaluation_config)
-    #         artifact = evaluator.evaluate(data_ingestion_artifact, model_trainer_artifact)
-    #         logging.info(f"✅ Model evaluation completed: {artifact}")
-    #         return artifact
-    #     except Exception as e:
-    #         raise CustomException(e)
+    # ------------------- Stage 5 -------------------
+    def start_model_evaluation(
+        self,
+        data_ingestion_artifact: DataIngestionArtifact,
+        model_trainer_artifact: ModelTrainerArtifact,
+    ) -> ModelEvaluationArtifact:
+        try:
+            logging.info("▶️ Starting model evaluation...")
+            evaluator = ModelEvaluation(
+                model_eval_config=self.model_evaluation_config,
+                data_ingestion_artifact=data_ingestion_artifact,
+                model_trainer_artifact=model_trainer_artifact
+            )
+            artifact = evaluator.run()
+            logging.info(f"✅ Model evaluation completed: {artifact}")
+            return artifact
+        except Exception as e:
+            raise CustomException(e)
 
-    # # ------------------- Stage 6 -------------------
-    # def start_model_pusher(
-    #     self, model_evaluation_artifact: ModelEvaluationArtifact
-    # ) -> ModelPusherArtifact:
-    #     try:
-    #         logging.info("▶️ Starting model pushing...")
-    #         pusher = ModelPusher(self.model_pusher_config)
-    #         artifact = pusher.push(model_evaluation_artifact)
-    #         logging.info(f"✅ Model pushing completed: {artifact}")
-    #         return artifact
-    #     except Exception as e:
-    #         raise CustomException(e)
+    # ------------------- Stage 6 -------------------
+    def start_model_pusher(
+        self, model_evaluation_artifact: ModelEvaluationArtifact
+    ) -> ModelPusherArtifact:
+        try:
+            logging.info("▶️ Starting model pushing...")
+            pusher = ModelPusher(
+                model_pusher_config=self.model_pusher_config,
+                model_evaluation_artifact=model_evaluation_artifact
+            )
+            artifact = pusher.initiate_model_pusher()
+            logging.info(f"✅ Model pushing completed: {artifact}")
+            return artifact
+        except Exception as e:
+            raise CustomException(e)
 
     # ------------------- Run Pipeline -------------------
     def run_pipeline(self) -> None:
@@ -147,15 +154,15 @@ class TrainPipeline:
             validation_artifact = self.start_data_validation(ingestion_artifact)
             transformation_artifact = self.start_data_transformation(validation_artifact)
             trainer_artifact = self.start_model_trainer(transformation_artifact)
-            # evaluation_artifact = self.start_model_evaluation(
-            #     ingestion_artifact, trainer_artifact
-            # )
+            evaluation_artifact = self.start_model_evaluation(
+                ingestion_artifact, trainer_artifact
+            )
 
-            # if not evaluation_artifact.is_model_accepted:
-            #     logging.info("❌ Model not accepted. Stopping pipeline.")
-            #     return
+            if not evaluation_artifact.is_model_accepted:
+                logging.info("❌ Model not accepted. Stopping pipeline.")
+                return
 
-            # self.start_model_pusher(evaluation_artifact)
+            self.start_model_pusher(evaluation_artifact)
             logging.info("🏁 ML Training Pipeline completed successfully")
         except Exception as e:
             raise CustomException(e)

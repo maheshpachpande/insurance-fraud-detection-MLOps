@@ -112,3 +112,85 @@ class ModelTrainerArtifact:
             result += f"  Train Metrics      : {self.train_metric_artifact}"
         result += f"  Test Metrics       : {self.test_metric_artifact}"
         return result
+
+
+# ---------------------------
+# Model Evolution Artifact
+# ---------------------------
+
+@dataclass
+class ModelEvaluationArtifact:
+    # Whether the newly trained model is accepted based on evaluation
+    is_model_accepted: bool
+    # Change in accuracy (or metric) compared to previous model
+    changed_accuracy: float
+    # Path to the model stored in S3
+    s3_model_path: str
+    # Local path to the trained model
+    trained_model_path: str
+
+    def __str__(self) -> str:
+        return (
+            f"ModelEvaluationArtifact(\n"
+            f"  is_model_accepted = {self.is_model_accepted},\n"
+            f"  changed_accuracy  = {self.changed_accuracy:.4f},\n"
+            f"  s3_model_path     = '{self.s3_model_path}',\n"
+            f"  trained_model_path= '{self.trained_model_path}'\n"
+            f")"
+        )
+
+
+# ---------------------------
+# Model Pusher Artifact
+# ---------------------------
+
+
+@dataclass
+class ModelPusherArtifact:
+    # Name of the S3 bucket where the model is pushed
+    bucket_name: str
+    # Full S3 path of the pushed model
+    s3_model_path: str
+
+    def __str__(self) -> str:
+        return (
+            f"ModelPusherArtifact(\n"
+            f"  bucket_name   = '{self.bucket_name}',\n"
+            f"  s3_model_path = '{self.s3_model_path}'\n"
+            f")"
+        )
+
+
+# # ---------------------------
+# # Model Pusher Artifact
+# # ---------------------------
+
+# @dataclass
+# class ModelPusherConfig:
+#     bucket_name: str = MODEL_BUCKET_NAME
+#     s3_model_key_path: str = MODEL_FILE_NAME
+
+#     def __str__(self) -> str:
+#         return (
+#             f"ModelPusherConfig(\n"
+#             f"  bucket_name      = '{self.bucket_name}',\n"
+#             f"  s3_model_key_path = '{self.s3_model_key_path}'\n"
+#             f")"
+#         )
+
+
+# # ---------------------------
+# # Predictor Artifact
+# # ---------------------------
+# @dataclass
+# class PredictorConfig:
+#     model_file_path: str = MODEL_FILE_NAME
+#     model_bucket_name: str = MODEL_BUCKET_NAME
+
+#     def __str__(self) -> str:
+#         return (
+#             f"PredictorConfig(\n"
+#             f"  model_file_path    = '{self.model_file_path}',\n"
+#             f"  model_bucket_name  = '{self.model_bucket_name}'\n"
+#             f")"
+#         )

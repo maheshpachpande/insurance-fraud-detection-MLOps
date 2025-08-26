@@ -142,3 +142,50 @@ class ModelTrainerConfig:
 
     # Path to the model configuration YAML (hyperparameters, search space, etc.)
     model_config_file_path: str = MODEL_TRAINER_CONFIG_FILE
+    
+    
+
+
+@dataclass
+class ModelEvaluationConfig:
+    # Minimum score change to trigger model update
+    changed_threshold_score: float = MODEL_EVALUATION_SCORE_CHANGE_THRESHOLD
+
+    # S3 bucket where the model is stored
+    bucket_name: str = MODEL_BUCKET_NAME
+
+    # S3 key path of the model file
+    s3_model_key_path: str = MODEL_FILE_NAME
+
+    # Local artifact YAML/JSON file path
+    artifact_file_path: str = os.path.join(
+        ARTIFACT_DIR, MODEL_EVALUATION_DIR, MODEL_EVALUATION_ARTIFACT_FILE
+    )
+    
+    
+    
+@dataclass
+class ModelPusherConfig:
+    bucket_name: str = MODEL_BUCKET_NAME
+    s3_model_key_path: str = MODEL_FILE_NAME
+
+    def __str__(self) -> str:
+        return (
+            f"ModelPusherConfig(\n"
+            f"  bucket_name      = '{self.bucket_name}',\n"
+            f"  s3_model_key_path = '{self.s3_model_key_path}'\n"
+            f")"
+        )
+
+# @dataclass
+# class PredictorConfig:
+#     model_file_path: str = MODEL_FILE_NAME
+#     model_bucket_name: str = MODEL_BUCKET_NAME
+
+#     def __str__(self) -> str:
+#         return (
+#             f"PredictorConfig(\n"
+#             f"  model_file_path    = '{self.model_file_path}',\n"
+#             f"  model_bucket_name  = '{self.model_bucket_name}'\n"
+#             f")"
+#         )
