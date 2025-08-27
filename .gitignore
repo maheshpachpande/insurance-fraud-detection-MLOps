@@ -209,3 +209,21 @@ __marimo__/
 
 artifact
 venv1
+
+
+# Folders to ignore
+artifact/
+flowchart/
+logs/
+note-book/
+researches/
+venv1/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environments
+venv/
+.env/

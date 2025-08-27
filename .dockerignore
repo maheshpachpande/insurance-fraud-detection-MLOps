@@ -1,1 +1,12 @@
 .env
+artifact/
+flowchart/
+logs/
+note-book/
+researches/
+venv1/
+__pycache__/
+*.pyc
+*.pyo
+
+demo.py

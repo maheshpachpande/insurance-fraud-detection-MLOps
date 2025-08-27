@@ -1,0 +1,55 @@
+# version: "3.9"
+
+# services:
+#   insurance_app:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     container_name: insurance_app
+#     restart: always
+#     ports:
+#       - "8000:8000"
+#     networks:
+#       - insurance_net
+#     environment:
+#       APP_HOST: 0.0.0.0
+#       APP_PORT: 8000
+#       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+#       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+#       AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+#       DVC_REMOTE_URL: ${DVC_REMOTE_URL}
+#     volumes:
+#       - ./models:/app/models
+#       - ./data:/app/data
+#       - ./logs:/app/logs
+#     healthcheck:
+#       test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+#       interval: 30s
+#       timeout: 5s
+#       retries: 3
+
+#   insurance_trainer:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     container_name: insurance_trainer
+#     restart: "on-failure"
+#     networks:
+#       - insurance_net
+#     environment:
+#       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+#       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+#       AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+#       DVC_REMOTE_URL: ${DVC_REMOTE_URL}
+#     volumes:
+#       - ./models:/app/models
+#       - ./data:/app/data
+#       - ./logs:/app/logs
+#     command: ["python", "training_pipeline_runner.py"]
+#     depends_on:
+#       insurance_app:
+#         condition: service_healthy
+
+# networks:
+#   insurance_net:
+#     driver: bridge
