@@ -1,15 +1,14 @@
-FROM python:3.12-slim
-
+# ---- builder ----
+FROM python:3.10 as builder
 
 WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir --target=/install -r requirements.txt
 
-COPY . /app
+# ---- runtime ----
+FROM python:3.10-alpine
 
-RUN pip install -r requirements.txt
-
-EXPOSE 5000
-
-CMD ["python3", "app.py"]
-
-
-
+WORKDIR /app
+COPY --from=builder /install /home/mahesh/Desktop/insurance-fraud-detection-MLOps/venv1/lib/python3.10/site-packages
+COPY . .
+ENTRYPOINT ["python", "app.py"]

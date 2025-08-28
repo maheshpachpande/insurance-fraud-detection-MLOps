@@ -10,3 +10,10 @@ __pycache__/
 *.pyo
 
 demo.py
+README.md
+README1.md
+project_info.txt
+dvc.lock
+.gitignore
+.dvc
+.github
